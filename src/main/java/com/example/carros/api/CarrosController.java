@@ -2,12 +2,15 @@ package com.example.carros.api;
 
 import com.example.carros.domain.Carro;
 import com.example.carros.domain.CarroService;
+import com.example.carros.domain.dto.CarroDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/carros")
@@ -17,14 +20,14 @@ public class CarrosController {
     private CarroService service;
 
     @GetMapping
-    public ResponseEntity<Iterable<Carro>> getCarros() {
+    public ResponseEntity<List<CarroDTO>> getCarros() {
         return ResponseEntity.ok(service.getCarros());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getById(@PathVariable Long id) {
 
-        Optional<Carro> carro =  service.getCarroById(id);
+        Optional<CarroDTO> carro =  service.getCarroById(id);
 
         if(carro.isPresent()) {
             return ResponseEntity.ok(carro.get());
@@ -35,7 +38,7 @@ public class CarrosController {
 
     @GetMapping("/tipo/{tipo}")
     public ResponseEntity getByTypo(@PathVariable String tipo) {
-        List<Carro> carros = service.getCarrosByTipo(tipo);
+        List<CarroDTO> carros = service.getCarrosByTipo(tipo);
 
         if(carros.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -54,7 +57,7 @@ public class CarrosController {
     @PutMapping("/{id}")
     public String put(@PathVariable("id") Long id, @RequestBody Carro carro) {
 
-        Carro c = service.update(carro, id);
+        CarroDTO c = service.update(carro, id);
 
         return "Carro atualizado com sucesso: " + c.getId();
     }

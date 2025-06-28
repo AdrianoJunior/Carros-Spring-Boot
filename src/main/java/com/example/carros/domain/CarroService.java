@@ -7,7 +7,6 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -30,8 +29,9 @@ public class CarroService {
 
     }
 
-    public Carro save(Carro carro) {
-        return repository.save(carro);
+    public CarroDTO insert(Carro carro) {
+        Assert.isNull(carro.getId(), "Não foi possível inserir o registro");
+        return CarroDTO.create(repository.save(carro));
     }
 
     public CarroDTO update(Carro carro, Long id) {
@@ -41,7 +41,7 @@ public class CarroService {
         Optional<Carro> optional = repository.findById(id);
         if(optional.isPresent()) {
             Carro db = optional.get();
-            // Copiar as propriedades
+            // Copia as propriedades
             db.setNome(carro.getNome());
             db.setTipo(carro.getTipo());
             System.out.println("Carro id " + db.getId());
@@ -52,14 +52,15 @@ public class CarroService {
             return CarroDTO.create(db);
         } else {
             return null;
-            //throw new RuntimeException("Não foi possível atualizar o registro");
         }
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
 
         if (getCarroById(id).isPresent()) {
             repository.deleteById(id);
+            return true;
         }
+        return false;
     }
 }
